@@ -18,6 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
+jctaxledger-balance-report = "etl.balanceReport:main"
 jctaxledger-etl = "etl.jcTaxEtl:main"
 jctaxledger-diff-ledger = "etl.diffLedgerSnapshots:main"
 jctaxledger-verify-ledger = "etl.verifyLedgerChain:main"

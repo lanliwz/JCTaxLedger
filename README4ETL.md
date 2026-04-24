@@ -10,6 +10,7 @@ Do not use real account numbers, addresses, owner names, or other live sensitive
 The ETL code lives in:
 
 - [`etl/jcTaxEtl.py`](etl/jcTaxEtl.py)
+- [`etl/balanceReport.py`](etl/balanceReport.py)
 - [`etl/diffLedgerSnapshots.py`](etl/diffLedgerSnapshots.py)
 - [`etl/jcTaxJson2node.py`](etl/jcTaxJson2node.py)
 - [`etl/verifyLedgerChain.py`](etl/verifyLedgerChain.py)
@@ -232,6 +233,17 @@ Main responsibilities:
 
 It supports both text and JSON output.
 
+### `etl/balanceReport.py`
+
+Main responsibilities:
+
+- optionally refresh ETL before reporting
+- query billed, paid, and balance totals by account and year
+- group report output by account email
+- send email through SMTP or Mail.app on macOS
+
+This script is the local reporting entry point for scheduled balance emails on this Mac.
+
 ### `neo4j_storage/dataService.py`
 
 Main responsibilities:
@@ -435,6 +447,31 @@ Wrapper equivalent:
 ```bash
 bin/jctaxledger-etl.sh --database taxjc
 ```
+
+To print a local balance report:
+
+```bash
+bin/jctaxledger-balance-report.sh --database taxjc
+```
+
+To refresh and email the report:
+
+```bash
+bin/jctaxledger-balance-report.sh --database taxjc --refresh --send
+```
+
+The local balance report accepts:
+
+- Neo4j env vars in either legacy `Neo4jFinDB*` form or common aliases such as `NEO4J_URI`, `NEO4J_URL`, `NEO4J_USERNAME`, and `NEO4J_PASSWORD`
+- SMTP env vars in either `JCTAX_SMTP_*` form or common aliases such as `SMTP_*`, `MAIL_*`, `EMAIL`, `YAHOO_EMAIL`, and `YAHOO_APP_PASSWORD`
+
+To install a local macOS scheduler:
+
+```bash
+bin/jctaxledger-install-launchd.sh 8 0
+```
+
+The installer writes the current shell's Neo4j and SMTP-related env vars into the generated launchd plist because launchd does not inherit your interactive shell environment automatically. Reinstall the job after credential changes.
 
 To diff the latest two snapshots per account:
 

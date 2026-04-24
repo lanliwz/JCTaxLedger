@@ -216,6 +216,50 @@ The diff report highlights:
 - rows removed in the newer snapshot
 - rows present in both snapshots but with changed fields
 
+## Local Balance Report
+
+The repository includes a local reporting script for this Mac:
+
+- [`etl/balanceReport.py`](etl/balanceReport.py)
+- [`bin/jctaxledger-balance-report.sh`](bin/jctaxledger-balance-report.sh)
+- [`bin/jctaxledger-install-launchd.sh`](bin/jctaxledger-install-launchd.sh)
+
+Use it to refresh tax data, compute balances, and email a report to the `email` stored on each `Account`.
+
+Print the report locally:
+
+```bash
+bin/jctaxledger-balance-report.sh --database taxjc
+```
+
+Refresh first, then print:
+
+```bash
+bin/jctaxledger-balance-report.sh --database taxjc --refresh
+```
+
+Refresh and send email:
+
+```bash
+bin/jctaxledger-balance-report.sh --database taxjc --refresh --send
+```
+
+The email transport works like this:
+
+- if SMTP env vars are configured, it uses SMTP
+- otherwise, on macOS it falls back to Mail.app via AppleScript
+- the script accepts both project-specific env vars such as `JCTAX_SMTP_*` and common local aliases such as `SMTP_*`, `MAIL_*`, `EMAIL`, `YAHOO_EMAIL`, and `YAHOO_APP_PASSWORD`
+- the script also accepts Neo4j aliases such as `NEO4J_URI`, `NEO4J_URL`, `NEO4J_USERNAME`, and `NEO4J_PASSWORD` and maps them to the ETL's legacy `Neo4jFinDB*` names when needed
+
+To install a local daily scheduler on this Mac with `launchd`:
+
+```bash
+bin/jctaxledger-install-launchd.sh 8 0
+```
+
+That example schedules the report for `8:00` local time each day.
+The installer captures the current shell's Neo4j and SMTP-related env vars into the generated plist because `launchd` does not inherit your interactive shell environment automatically. Reinstall the job after credential changes.
+
 ## Packaging
 
 Build release artifacts locally with:

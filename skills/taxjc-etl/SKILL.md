@@ -20,6 +20,7 @@ description: Use when refreshing, rewriting, or validating the Jersey City tax E
    - The current source is the HLS endpoint described in `references/etl-runbook.md`.
    - Prefer checking the actual response shape with a real account over assuming fields are stable.
 3. Read only the files you need:
+   - `etl/balanceReport.py`
    - `etl/jcTaxEtl.py`
    - `etl/diffLedgerSnapshots.py`
    - `etl/jcTaxJson2node.py`
@@ -39,6 +40,8 @@ description: Use when refreshing, rewriting, or validating the Jersey City tax E
    - Run `python -m py_compile` on touched Python files.
    - Run `bin/jctaxledger-verify-ledger.sh --database <db>` after ETL changes that affect ledger writes.
    - Use `bin/jctaxledger-diff-ledger.sh --database <db>` when the task is to explain what changed between two snapshots.
+   - Use `bin/jctaxledger-balance-report.sh --database <db>` when the task is to produce a local balance report or email it from this Mac.
+   - For local scheduled report/email work, remember that launchd does not inherit the interactive shell env. Ensure the installer or plist carries the required Neo4j and SMTP env values.
    - If you add or change a packaged CLI command, rebuild/install the package or use the repo wrapper script when testing it.
 6. Run the ETL against `taxjc` explicitly.
    - Prefer overriding `Neo4jFinDBName=taxjc` for safety.
