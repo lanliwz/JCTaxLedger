@@ -473,6 +473,37 @@ bin/jctaxledger-install-launchd.sh 8 0
 
 The installer writes the current shell's Neo4j and SMTP-related env vars into the generated launchd plist because launchd does not inherit your interactive shell environment automatically. Reinstall the job after credential changes.
 
+## Brookhaven Tax Statement Downloader
+
+The Brookhaven statement downloader uses the public tax map form at:
+
+- [https://onlinepayment.brookhavenny.gov/taxmap/index](https://onlinepayment.brookhavenny.gov/taxmap/index)
+
+It fetches the request verification token from the form, submits the `Item Number` lookup, and saves the returned PDF or statement HTML under `var/brookhaven-tax-statements` by default.
+
+Run manually:
+
+```bash
+bin/jctaxledger-download-brookhaven-tax-statement.sh --item 12-34567
+```
+
+Run for multiple item numbers:
+
+```bash
+bin/jctaxledger-download-brookhaven-tax-statement.sh --item 12-34567 --item 23-45678
+```
+
+Install the monthly scheduler:
+
+```bash
+export BROOKHAVEN_ITEM_NUMBERS="12-34567,23-45678"
+export BROOKHAVEN_TAX_OUTPUT_DIR="var/brookhaven-tax-statements"
+export BROOKHAVEN_TAX_EMAIL_TO="you@example.com"
+bin/jctaxledger-install-brookhaven-tax-statement-launchd.sh 8 30
+```
+
+The scheduler runs on April 15 and December 15 every year, then emails the downloaded statement. The scheduler installer writes the current shell's `BROOKHAVEN_ITEM_NUMBERS`, optional `BROOKHAVEN_TAX_OUTPUT_DIR`, `BROOKHAVEN_TAX_EMAIL_TO`, SMTP/email env vars, and optional `PYTHON_BIN` into the generated launchd plist.
+
 To diff the latest two snapshots per account:
 
 ```bash

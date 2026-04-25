@@ -260,6 +260,31 @@ bin/jctaxledger-install-launchd.sh 8 0
 That example schedules the report for `8:00` local time each day.
 The installer captures the current shell's Neo4j and SMTP-related env vars into the generated plist because `launchd` does not inherit your interactive shell environment automatically. Reinstall the job after credential changes.
 
+## Brookhaven Tax Statement Downloads
+
+Download Brookhaven tax statements from the public Town of Brookhaven tax map UI by item number:
+
+```bash
+bin/jctaxledger-download-brookhaven-tax-statement.sh --item 12-34567
+```
+
+The downloader also accepts 7 digits without the dash:
+
+```bash
+bin/jctaxledger-download-brookhaven-tax-statement.sh --item 1234567
+```
+
+For recurring downloads, set item numbers in the current shell and install the monthly `launchd` job:
+
+```bash
+export BROOKHAVEN_ITEM_NUMBERS="12-34567,23-45678"
+export BROOKHAVEN_TAX_OUTPUT_DIR="var/brookhaven-tax-statements"
+export BROOKHAVEN_TAX_EMAIL_TO="you@example.com"
+bin/jctaxledger-install-brookhaven-tax-statement-launchd.sh 8 30
+```
+
+That schedules the downloader for April 15 and December 15 every year at `8:30` local time, then emails the downloaded statement. The installer captures the current shell's `BROOKHAVEN_*` and SMTP/email env vars into the generated plist because `launchd` does not inherit your interactive shell environment automatically.
+
 ## Packaging
 
 Build release artifacts locally with:

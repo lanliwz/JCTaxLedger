@@ -8,6 +8,7 @@
 dist/
 build/
 *.egg-info/
+var/
 
 __pycache__/
 *.py[cod]
